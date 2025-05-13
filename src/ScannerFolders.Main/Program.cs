@@ -33,35 +33,40 @@ internal class Program
             .Build();
 
         var targetSection = config.GetSection("AppSettings");
-        var rootDirectory = targetSection
-            .GetSection("Scan:RootDirectory")
+        var scanDirectory = targetSection
+            .GetSection("Scan:Directory")
             .Get<string>();
 
-        var outputDirectory = targetSection
-            .GetSection("Scan:OutputDirectory")
-            .Get<string>();
-
-        var excludeFolders = targetSection
+        var excludeScanFolders = targetSection
             .GetSection("Scan:ExcludeFolders")
             .Get<string[]>();
 
-        var excludeFileExtensions = targetSection
+        var excludeScanFileExtensions = targetSection
             .GetSection("Scan:ExcludeFileExtensions")
             .Get<string[]>();
 
+        var outputDirectory = targetSection
+            .GetSection("Output:Directory")
+            .Get<string>();
+
+        var useSpaceBeetwenProjects = targetSection
+            .GetSection("Output:UseSpaceBeetwenProjects")
+            .Get<bool>();
+
         var useDomainDrivenDesignOrder = targetSection
-            .GetSection("FolderOrdering:UseDomainDrivenDesignOrder")
+            .GetSection("Output:UseDomainDrivenDesignOrder")
             .Get<bool>();
 
         var domainDrivenDesignOrder = targetSection
-            .GetSection("FolderOrdering:DomainDrivenDesignOrder")
+            .GetSection("Output:DomainDrivenDesignOrder")
             .Get<string[]>();
 
         var scanConfiguration = new ScanConfiguration(
-            rootDirectory,
+            scanDirectory,
+            excludeScanFolders, 
+            excludeScanFileExtensions,
             outputDirectory,
-            excludeFolders, 
-            excludeFileExtensions,
+            useSpaceBeetwenProjects,
             useDomainDrivenDesignOrder,
             domainDrivenDesignOrder);
 

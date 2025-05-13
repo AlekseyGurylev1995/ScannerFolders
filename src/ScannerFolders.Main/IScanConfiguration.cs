@@ -2,9 +2,19 @@
 internal interface IScanConfiguration
 {
     /// <summary>
-    ///     Корневой каталог сканирования
+    ///     Каталог сканирования
     /// </summary>
-    string RootDirectory { get; }
+    string ScanDirectory { get; }
+
+    /// <summary>
+    ///     Набор папок исключаемых из сканирования
+    /// </summary>
+    HashSet<string> ExcludeScanFolders { get; }
+
+    /// <summary>
+    ///     Набор расширений файлов исключаемых из сканирования
+    /// </summary>
+    HashSet<string> ExcludeScanFileExtensions { get; }
 
     /// <summary>
     ///     Выходной каталог для сохранения результата сканирования
@@ -12,14 +22,9 @@ internal interface IScanConfiguration
     string OutputDirectory { get; }
 
     /// <summary>
-    ///     Набор папок исключаемых из сканирования
+    ///     Признак необходимости использовать отступ между проектами
     /// </summary>
-    HashSet<string> ExcludeFolders { get; }
-
-    /// <summary>
-    ///     Набор расширений файлов исключаемых из сканирования
-    /// </summary>
-    HashSet<string> ExcludeFileExtensions { get; }
+    bool UseSpaceBeetwenProjects { get; }
 
     /// <summary>
     ///     Признак необходимости сортировки в порядке соответствующем стилю DDD

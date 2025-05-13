@@ -36,7 +36,7 @@ internal class ScannerFolders
 	/// </summary>
 	public void Run()
 	{
-		_currentPath = _scanConfiguration.RootDirectory;
+		_currentPath = _scanConfiguration.ScanDirectory;
 		_currentNestingLevel = 0;
 
 		var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd (HH-mm-ss.ffff)");
@@ -59,7 +59,7 @@ internal class ScannerFolders
 	}
 
 	/// <summary>
-	///		Получить каталоги в порядке, соответствующем DDD
+	///		Получить каталоги в порядке, соответствующе стилю DDD
 	/// </summary>
 	private IEnumerable<string> GetDirectoriesOrderedByDomainDrivenDesign() 
 	{
@@ -82,7 +82,7 @@ internal class ScannerFolders
         if (orderedDirectories.Any() == false) 
         {
             throw new Exception(
-                "Ни одна из дочерних папок (относительно корня) не соответствует не соответствует стилю DDD");
+                "Ни одна из дочерних папок (относительно корня) не соответствует стилю DDD");
         }
 
 		return orderedDirectories;
@@ -93,15 +93,17 @@ internal class ScannerFolders
 	/// </summary>
 	private void RecursiveScanFolder()
 	{
-		// отступ между проектами
-		WriteSpacingBeetwenProjects();
-
 		_currentDirectoryName = Path.GetFileName(_currentPath);
-		if (_scanConfiguration.ExcludeFolders.Contains(_currentDirectoryName)) 
+		if (_scanConfiguration.ExcludeScanFolders.Contains(_currentDirectoryName)) 
 		{
             return;
 		}
 
+        if (_scanConfiguration.UseSpaceBeetwenProjects) 
+        {
+            WriteSpacingBeetwenProjects();
+        }
+       
         // генерируем n количество физических отступов табуляции
         //		в зависимости от уровня вложенности
         var indentation = new string('\t', _currentNestingLevel);
@@ -130,7 +132,7 @@ internal class ScannerFolders
 			var fileName = Path.GetFileName(file);
 			var fileExtension = Path.GetExtension(file);
 
-			if (_scanConfiguration.ExcludeFileExtensions.Contains(fileExtension)) 
+			if (_scanConfiguration.ExcludeScanFileExtensions.Contains(fileExtension)) 
 			{
 				continue;
 			}
@@ -141,7 +143,7 @@ internal class ScannerFolders
 	}
 
 	/// <summary>
-	///		Отступ между проектами
+	///		Записать отступ между проектами
 	/// </summary>
 	private void WriteSpacingBeetwenProjects() 
 	{

@@ -1,34 +1,38 @@
 ﻿namespace ScannerFolders.Main;
 internal class ScanConfiguration : IScanConfiguration
 {
-    public string RootDirectory { get; }
+    public string ScanDirectory { get; }
+    public HashSet<string> ExcludeScanFolders { get; }
+    public HashSet<string> ExcludeScanFileExtensions { get; }
     public string OutputDirectory { get; }
-    public HashSet<string> ExcludeFolders { get; }
-    public HashSet<string> ExcludeFileExtensions { get; }
+    public bool UseSpaceBeetwenProjects { get; }
     public bool UseDomainDrivenDesignOrder { get; }
     public string[] DomainDrivenDesignOrder { get; }
 
     public ScanConfiguration(
-        string rootDirectory,
+        string scanDirectory,
+        IEnumerable<string> excludeScanFolders,
+        IEnumerable<string> excludeScanFileExtensions,
         string outputDirectory,
-        IEnumerable<string> excludeFolders,
-        IEnumerable<string> excludeFileExtensions,
+        bool useSpaceBeetwenProjects,
         bool useDomainDrivenDesignOrder,
         IEnumerable<string> domainDrivenDesignOrder)
     {
-        excludeFolders = excludeFolders
+        excludeScanFolders = excludeScanFolders
             ?? Enumerable.Empty<string>();
 
-        excludeFileExtensions = excludeFileExtensions
+        excludeScanFileExtensions = excludeScanFileExtensions
             ?? Enumerable.Empty<string>();
 
         domainDrivenDesignOrder = domainDrivenDesignOrder
             ?? Enumerable.Empty<string>();
 
-        RootDirectory = rootDirectory;
+        ScanDirectory = scanDirectory;
+        ExcludeScanFolders = excludeScanFolders.ToHashSet();
+        ExcludeScanFileExtensions = excludeScanFileExtensions.ToHashSet();
+
         OutputDirectory = outputDirectory;
-        ExcludeFolders = excludeFolders.ToHashSet();
-        ExcludeFileExtensions = excludeFileExtensions.ToHashSet();
+        UseSpaceBeetwenProjects = useSpaceBeetwenProjects;
         UseDomainDrivenDesignOrder = useDomainDrivenDesignOrder;
         DomainDrivenDesignOrder = domainDrivenDesignOrder.ToArray();
     }
