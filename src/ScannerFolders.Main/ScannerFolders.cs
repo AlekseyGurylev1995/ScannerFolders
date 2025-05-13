@@ -1,10 +1,8 @@
 ﻿namespace ScannerFolders.Main;
 internal class ScannerFolders
 {
-	private readonly IScanConfiguration _scanConfiguration;
-
 	/// <summary>
-	///		Текущий путь (где проходит сканирование)
+	///		Текущий путь (где происходит сканирование)
 	/// </summary>
 	private string _currentPath;
 
@@ -26,7 +24,9 @@ internal class ScannerFolders
     /// </summary>
     private StreamWriter _writer;
 
-	public ScannerFolders(IScanConfiguration scanConfiguration)
+    private readonly IScanConfiguration _scanConfiguration;
+
+    public ScannerFolders(IScanConfiguration scanConfiguration)
 	{
 		_scanConfiguration = scanConfiguration;
 	}
@@ -49,6 +49,12 @@ internal class ScannerFolders
             if (_scanConfiguration.UseDomainDrivenDesignOrder)
             {
                 var directoriesOrdered = GetDirectoriesOrderedByDomainDrivenDesign();
+				if (directoriesOrdered.Any() == false) 
+				{
+					throw new Exception(
+						"Ни одна из дочерник папок (относительно корня) не соответствует стилю DDD");
+				}
+
                 foreach (var directory in directoriesOrdered)
                 {
                     _currentPath = directory;
@@ -77,7 +83,7 @@ internal class ScannerFolders
 
             if (foundDirectoryPath == default)
             {
-                throw new Exception("Дочерние папки не соответствует формату Domain Driven Design");
+				continue;
             }
 
 			orderedDirectories.Add(foundDirectoryPath);
