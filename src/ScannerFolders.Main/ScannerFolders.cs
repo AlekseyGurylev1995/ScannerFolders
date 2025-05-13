@@ -108,7 +108,7 @@ internal class ScannerFolders
         //		в зависимости от уровня вложенности
         var indentation = new string('\t', _currentNestingLevel);
 		
-		// запись наименования каталога в файл
+		// записать наименования каталога
         _writer.WriteLine($"{indentation}.{_currentDirectoryName}");
 		
         var subDirectories = Directory.GetDirectories(_currentPath);
@@ -137,7 +137,7 @@ internal class ScannerFolders
 				continue;
 			}
 
-			// запись наименования файла в файл
+			// записать наименования файла
 			_writer.WriteLine($"{indentation + "\t"}{fileName}");
 		}
 	}
