@@ -46,25 +46,15 @@ internal class ScannerFolders
 
 		using (_writer = new StreamWriter(outputFilePath, true)) 
 		{
-            if (_scanConfiguration.UseDomainDrivenDesignOrder)
+            var directories = _scanConfiguration.UseDomainDrivenDesignOrder
+                ? GetDirectoriesOrderedByDomainDrivenDesign()
+                : Directory.GetDirectories(_currentPath);
+
+            foreach (var directory in directories) 
             {
-                var directoriesOrdered = GetDirectoriesOrderedByDomainDrivenDesign();
-				if (directoriesOrdered.Any() == false) 
-				{
-					throw new Exception(
-						"Ни одна из дочерник папок (относительно корня) не соответствует стилю DDD");
-				}
-
-                foreach (var directory in directoriesOrdered)
-                {
-                    _currentPath = directory;
-                    RecursiveScanFolder();
-                }
-
-                return;
+                _currentPath = directory;
+                RecursiveScanFolder();
             }
-
-            RecursiveScanFolder();
         }
 	}
 
@@ -74,7 +64,7 @@ internal class ScannerFolders
 	private IEnumerable<string> GetDirectoriesOrderedByDomainDrivenDesign() 
 	{
         var subDirectories = Directory.GetDirectories(_currentPath);
-        var orderedDirectories = new List<string>(subDirectories.Length);
+        var orderedDirectories = new List<string>();
 
 		foreach (var findDirectory in _scanConfiguration.DomainDrivenDesignOrder) 
 		{
@@ -87,6 +77,12 @@ internal class ScannerFolders
             }
 
 			orderedDirectories.Add(foundDirectoryPath);
+        }
+
+        if (orderedDirectories.Any() == false) 
+        {
+            throw new Exception(
+                "Ни одна из дочерних папок (относительно корня) не соответствует не соответствует стилю DDD");
         }
 
 		return orderedDirectories;
@@ -149,16 +145,8 @@ internal class ScannerFolders
 	/// </summary>
 	private void WriteSpacingBeetwenProjects() 
 	{
-        // в случае вкл. сортировки директорий в стиле DDD
-		// проекты будут на уровне вложенности 0
-        if (_scanConfiguration.UseDomainDrivenDesignOrder)
-        {
-            if (_currentNestingLevel == 0)
-            {
-                _writer.WriteLine();
-            }
-        }
-        else if (_currentNestingLevel == 1)
+        var files = Directory.GetFiles(_currentPath, "*.csproj");
+        if (files.Any()) 
         {
             _writer.WriteLine();
         }
