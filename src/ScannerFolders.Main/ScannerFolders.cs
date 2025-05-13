@@ -53,7 +53,7 @@ internal class ScannerFolders
             foreach (var directory in directories) 
             {
                 _currentPath = directory;
-                RecursiveScanFolder();
+                RecursiveScanDirectory();
             }
         }
 	}
@@ -91,7 +91,7 @@ internal class ScannerFolders
 	/// <summary>
 	///		Сканировать каталог (рекурсивно)		
 	/// </summary>
-	private void RecursiveScanFolder()
+	private void RecursiveScanDirectory()
 	{
 		_currentDirectoryName = Path.GetFileName(_currentPath);
 		if (_scanConfiguration.ExcludeScanFolders.Contains(_currentDirectoryName)) 
@@ -119,7 +119,7 @@ internal class ScannerFolders
 			for (int i = 0; i < subDirectories.Length; i++) 
 			{
 				_currentPath = subDirectories[i];
-				RecursiveScanFolder();
+				RecursiveScanDirectory();
 			}
 			_currentPath = parentPath;
 			_currentNestingLevel--;
