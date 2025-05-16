@@ -2,14 +2,14 @@
 internal class ScannerFolders
 {
 	/// <summary>
-	///		Текущий путь (где происходит сканирование)
+	///		Текущий путь директории (где происходит сканирование)
 	/// </summary>
-	private string _currentPath;
+	private string _currentScanDirectoryPath;
 
 	/// <summary>
-	///		Текущее наименование каталога
+	///		Текущее наименование сканируемого каталога
 	/// </summary>
-	private string _currentDirectoryName;
+	private string _currentScanDirectoryName;
 
 	/// <summary>
 	///		Текущий уровень вложенности (относительно корня)
@@ -36,7 +36,7 @@ internal class ScannerFolders
 	/// </summary>
 	public void Run()
 	{
-		_currentPath = _scanConfiguration.ScanDirectory;
+		_currentScanDirectoryPath = _scanConfiguration.ScanDirectory;
 		_currentNestingLevel = 0;
 
 		var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd (HH-mm-ss.ffff)");
@@ -48,11 +48,11 @@ internal class ScannerFolders
 		{
             var directories = _scanConfiguration.UseDomainDrivenDesignOrder
                 ? GetDirectoriesOrderedByDomainDrivenDesign()
-                : Directory.GetDirectories(_currentPath);
+                : Directory.GetDirectories(_currentScanDirectoryPath);
 
             foreach (var directory in directories) 
             {
-                _currentPath = directory;
+                _currentScanDirectoryPath = directory;
                 RecursiveScanDirectory();
             }
         }
@@ -63,7 +63,7 @@ internal class ScannerFolders
 	/// </summary>
 	private IEnumerable<string> GetDirectoriesOrderedByDomainDrivenDesign() 
 	{
-        var subDirectories = Directory.GetDirectories(_currentPath);
+        var subDirectories = Directory.GetDirectories(_currentScanDirectoryPath);
         var orderedDirectories = new List<string>();
 
 		foreach (var findDirectory in _scanConfiguration.DomainDrivenDesignOrder) 
@@ -93,8 +93,8 @@ internal class ScannerFolders
 	/// </summary>
 	private void RecursiveScanDirectory()
 	{
-		_currentDirectoryName = Path.GetFileName(_currentPath);
-		if (_scanConfiguration.ExcludeScanFolders.Contains(_currentDirectoryName)) 
+		_currentScanDirectoryName = Path.GetFileName(_currentScanDirectoryPath);
+		if (_scanConfiguration.ExcludeScanFolders.Contains(_currentScanDirectoryName)) 
 		{
             return;
 		}
@@ -109,24 +109,24 @@ internal class ScannerFolders
         var indentation = new string('\t', _currentNestingLevel);
 		
 		// записать наименования каталога
-        _writer.WriteLine($"{indentation}.{_currentDirectoryName}");
+        _writer.WriteLine($"{indentation}.{_currentScanDirectoryName}");
 		
-        var subDirectories = Directory.GetDirectories(_currentPath);
+        var subDirectories = Directory.GetDirectories(_currentScanDirectoryPath);
 		if (subDirectories.Any()) 
 		{
-			var parentPath = _currentPath;
+			var parentPath = _currentScanDirectoryPath;
 			_currentNestingLevel++;
 			for (int i = 0; i < subDirectories.Length; i++) 
 			{
-				_currentPath = subDirectories[i];
+				_currentScanDirectoryPath = subDirectories[i];
 				RecursiveScanDirectory();
 			}
-			_currentPath = parentPath;
+			_currentScanDirectoryPath = parentPath;
 			_currentNestingLevel--;
 		}
 
 		// файлы каталога
-		var files = Directory.GetFiles(_currentPath);
+		var files = Directory.GetFiles(_currentScanDirectoryPath);
 		foreach (var file in files) 
 		{
 			var fileName = Path.GetFileName(file);
@@ -147,7 +147,7 @@ internal class ScannerFolders
 	/// </summary>
 	private void WriteSpacingBeetwenProjects() 
 	{
-        var files = Directory.GetFiles(_currentPath, "*.csproj");
+        var files = Directory.GetFiles(_currentScanDirectoryPath, "*.csproj");
         if (files.Any()) 
         {
             _writer.WriteLine();
