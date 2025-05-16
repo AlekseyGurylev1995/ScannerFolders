@@ -2,7 +2,7 @@
 internal class ScannerFolders
 {
 	/// <summary>
-	///		Текущий путь директории (где происходит сканирование)
+	///		Текущий путь сканируемого каталога
 	/// </summary>
 	private string _currentScanDirectoryPath;
 
